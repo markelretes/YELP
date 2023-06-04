@@ -55,11 +55,11 @@ predictions = model.transform(test)
 evaluator = RegressionEvaluator(metricName="rmse", labelCol="stars", predictionCol="prediction")
 rmse = evaluator.evaluate(predictions)
 
-# We generate top 10 business recommendations for users: 0, 1, 2, 3, 4.
-userSubset = [0, 1, 2, 3, 4]
+# We generate top 10 business recommendations for users: 0, 1, 2, 3.
+userSubset = [0, 1, 2, 3]
 
 users = spark.createDataFrame([(user,) for user in userSubset], ["user_idx"])
 userRecommendations = model.recommendForUserSubset(users, 10)
 
-# Save the output recommendations for 5 users in directory /yelp/output-collaborativeFiltering in the HDFS
+# Save the output recommendations for 4 users in directory /yelp/output-collaborativeFiltering in the HDFS
 userRecommendations.rdd.map(lambda row: str((row))).saveAsTextFile('/yelp/output-collaborativeFiltering')
