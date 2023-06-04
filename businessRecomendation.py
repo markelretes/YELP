@@ -12,6 +12,7 @@ spark = SparkSession.builder.getOrCreate()
 
 #   Read the data from business dataset
 business = spark.read.json('/YELP/input/yelp_academic_dataset_business.json')
+#   As the exectuion with the full YELP dataset is too long, we have selected the 1% of the dataset
 business = business.sample(fraction=0.01, seed=42)
 
 business = business.drop("address")
@@ -61,6 +62,7 @@ business = idfModel.transform(business)
 businessRDD = business.rdd
 vectors = businessRDD.map(lambda x: (x["business_id"], x["features"]))
 # Get the featureVector of the id to compare
+# For comparation, I have selected the first business
 vectorComparacion = vectors.first()[1]
 # Compare each id with the selected one
 results = vectors.map(lambda x: (x[0], distance.cosine(x[1].toArray(), vectorComparacion.toArray())))
@@ -73,4 +75,5 @@ results_rdd = spark.sparkContext.parallelize(results)
 results_string_rdd = results_rdd.map(lambda row: str(row))
 
 # Save txt in HDFS
+# The business id's and distance is saved 
 results_string_rdd.saveAsTextFile('/YELP/output-businessRecommendation')
