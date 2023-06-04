@@ -17,3 +17,6 @@ topCities = topCities.groupBy("city").agg({"stars": "avg"})
 
 # Get the top 10 with the highest average rating
 topCities = topCities.sort(desc("avg(stars)")).limit(10)
+
+# Save the output to a textfile at the directory /yelp/output-top10cities in the HDFS
+topCities.rdd.map(lambda row: str((row))).saveAsTextFile('/yelp/output-top10cities')
